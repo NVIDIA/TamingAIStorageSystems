@@ -1,0 +1,26 @@
+# 4-metadata/nodemap-example.txt
+# Nodemap = multi-tenant identity. Map incoming client UIDs/GIDs per tenant so
+# tenants cannot read each other's files even if UIDs collide. Governance rides
+# on the METADATA PLANE -- sizing that plane is a security decision too.
+
+# --- Turn nodemaps on (they are inert until activated) ------------------------
+lctl nodemap_activate 1
+
+# --- Define a tenant and the client range that belongs to it -----------------
+lctl nodemap_add tenant_a
+lctl nodemap_add_range   --name tenant_a --range 10.10.0.[1-254]@o2ib
+lctl nodemap_modify --name tenant_a --property admin   --value 0
+lctl nodemap_modify --name tenant_a --property trusted --value 0
+
+# --- Squash their identity to a project-owned UID range ----------------------
+lctl nodemap_modify --name tenant_a --property squash_uid --value 5000
+lctl nodemap_add_idmap --name tenant_a --idtype uid --idmap 0:5000
+
+# --- RBAC (EXAScaler 6.3.x): scope what a nodemap role may do ----------------
+lctl nodemap_modify --name tenant_a --property rbac --value file_perms
+
+# Verify:
+lctl nodemap_info tenant_a
+
+# RESULT: tenant_a clients see only their remapped identity. Root on a tenant
+# client is NOT root on the filesystem. This is the multitenancy foundation.

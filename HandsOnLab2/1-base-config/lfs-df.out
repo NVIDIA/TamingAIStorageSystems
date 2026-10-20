@@ -1,0 +1,17 @@
+# Captured on the lab system:  $ lfs df -h
+# Capacity + inodes per target. Two lessons hide here.
+UUID                     bytes    Used  Available  Use%  Mounted on
+ai0-MDT0000_UUID         1.8T    120G   1.6T     7%  /ai0[MDT:0]
+ai0-MDT0001_UUID         1.8T     18G   1.7T     1%  /ai0[MDT:1]   <- imbalanced!
+ai0-OST0000_UUID       350.0T   240T   110T    68%  /ai0[OST:0]
+ai0-OST0001_UUID       350.0T   239T   111T    68%  /ai0[OST:1]
+ai0-OST0002_UUID       350.0T   305T    45T    87%  /ai0[OST:2]   <- hot OST
+ai0-OST0003_UUID       350.0T   238T   112T    68%  /ai0[OST:3]
+ ...                      ...     ...    ...    ...
+filesystem_summary:     14.0P   9.6P   4.4P    69%  /ai0
+
+# READ ALONG:
+#  1) OST:2 is at 87% while its siblings sit at ~68%. That is a striping
+#     symptom: big single-OST files (stripe_count=1) piled onto one target.
+#  2) MDT:0 holds 120G, MDT:1 holds 18G. Metadata load is NOT balanced across
+#     the two MDTs yet -- DNE striped directories (4-metadata) fix that.

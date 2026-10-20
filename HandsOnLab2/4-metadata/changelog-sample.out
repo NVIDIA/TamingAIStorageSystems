@@ -1,0 +1,16 @@
+# 4-metadata/changelog-sample.out
+# Changelogs = the audit trail on the METADATA PLANE: who touched what, when.
+# Register a consumer, then read the stream. Records persist until cleared.
+$ lctl --device ai0-MDT0000 changelog_register
+ai0-MDT0000: registered changelog userid 'cl1'
+
+$ lfs changelog ai0-MDT0000
+1  01CREAT  14:22:07.918 2026.11.16 0x0 t=[0x200000403:0x1a:0x0] p=[0x200000401:0x2:0x0] model_epoch3.pt
+2  06UNLNK  14:31:44.002 2026.11.16 0x1 t=[0x200000403:0x1a:0x0] p=[0x200000401:0x2:0x0] model_epoch2.pt
+3  08RENME  14:31:44.219 2026.11.16 0x0 t=[0x200000403:0x1b:0x0] ... model_final.pt <- model_epoch3.pt
+4  01CREAT  14:45:10.550 2026.11.16 0x0 ... u=5000:5000 labels.json   # tenant_a squashed uid
+5  10SATTR  14:45:11.101 2026.11.16 ... mode 0640  labels.json
+# Fields: index, TYPE, timestamp, flags, target FID, parent FID, name.
+# 06UNLNK/08RENME are exactly what you want when a checkpoint "disappears."
+
+$ lfs changelog_clear ai0-MDT0000 cl1 4      # ack up to record 4; frees space

@@ -1,0 +1,16 @@
+# Captured on the lab system:  $ lctl dl
+# Device list. Read the "type" column against the three planes.
+#   mdt/mds -> METADATA PLANE   ost/oss -> DATA PLANE   osc/mdc/lov/lmv -> CLIENT
+  0 UP osd-ldiskfs ai0-MDT0000-osd ai0-MDT0000-osd_UUID 9
+  1 UP mgs MGS MGS 11
+  2 UP mgc MGC10.0.0.1@o2ib 3f9a...c1 5
+  3 UP mdt ai0-MDT0000 ai0-MDT0000_UUID 13      # metadata target 0
+  4 UP mdt ai0-MDT0001 ai0-MDT0001_UUID 13      # metadata target 1 (DNE)
+  5 UP lod ai0-MDT0000-mdtlov ai0-MDT0000-mdtlov_UUID 4
+ 10 UP osp ai0-OST0000-osc-MDT0000 ... 5
+ 11 UP ost ai0-OST0000 ai0-OST0000_UUID 7       # object target 0
+ 12 UP ost ai0-OST0001 ai0-OST0001_UUID 7       # object target 1
+ 13 UP ost ai0-OST0002 ai0-OST0002_UUID 7       #  ... 40 OSTs total (0000-0027 hex)
+ 50 UP lov ai0-clilov-ffff9a... ...             # CLIENT: logical object volume
+ 51 UP lmv ai0-clilmv-ffff9a... ...             # CLIENT: logical metadata volume
+# 3 mdt + 40 ost + client stack. This is one namespace ("ai0") over all of it.
