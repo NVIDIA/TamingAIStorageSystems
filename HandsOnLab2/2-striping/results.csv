@@ -1,0 +1,7 @@
+stripe_count,osts_touched,write_bw_relative,note
+1,1,1.0,default trap - one OST
+2,2,1.9,near-linear early
+4,4,3.7,near-linear
+8,8,7.1,near-linear
+16,16,8.6,tapering
+40,40,9.4,all OSTs - network/client bound

@@ -1,0 +1,23 @@
+# 4-metadata/project-quota.txt
+# Project quotas = per-team accounting and limits on a subtree, independent of
+# user/group. The standard way to bill and cap GPU teams sharing one namespace.
+
+# 1) Enable project quota enforcement (feature set at format time; see conf).
+lctl conf_param ai0.quota.ost=ugp     # user, group, project accounting on OSTs
+lctl conf_param ai0.quota.mdt=ugp
+
+# 2) Tag a subtree with a project id (-r = recursive, -p = set project).
+lfs project -p 1001 -r -s /scratch/team-a
+
+# 3) Set the limits for that project id.
+lfs setquota -p 1001 --block-softlimit 90T --block-hardlimit 100T \
+             --inode-softlimit 40M --inode-hardlimit 50M /ai0
+
+# 4) Report usage against the cap.
+lfs quota -p 1001 /ai0
+#   Disk quotas for prj 1001:
+#     Filesystem  used  soft  hard   files   isoft  ihard
+#     /ai0        72.4T 90T   100T   28.1M   40M    50M
+
+# NOTE: inode limits matter as much as bytes -- small-file jobs blow the inode
+# cap long before the byte cap. Size both.

@@ -1,0 +1,20 @@
+# after.out  --  stripe_count = 8, then -1 (all 40)
+# Same 24 GiB checkpoint, same client. RELATIVE to the before.out baseline.
+$ lfs getstripe /scratch/ckpt/model_epoch3.pt   # after -c 8
+  lmm_stripe_count:  8
+  lmm_stripe_size:   1048576
+  lmm_pattern:       raid0
+  lmm_layout_gen:    1
+
+$ ior -w -t 1m -b 24g -o /scratch/ckpt/model_epoch3.pt
+Operation   Mean(Rel)   OSTs touched   note
+---------   ---------   ------------   ----------------------------------------
+write            7.1x              8   ~linear with stripe width, then tapers
+
+$ lfs setstripe -c -1 /scratch/ckpt/ ; # re-write across all 40 OSTs
+$ ior -w -t 1m -b 24g -o /scratch/ckpt/model_epoch3.pt
+Operation   Mean(Rel)   OSTs touched   note
+---------   ---------   ------------   ----------------------------------------
+write            9.4x             40   diminishing returns: network + client cap
+# Lesson: bandwidth scales with width until another resource becomes the wall.
+# Report the DELTA (a multiple), not the absolute number.

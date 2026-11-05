@@ -1,0 +1,18 @@
+# results-summary.txt -- what each advanced layout buys you (relative, synthetic)
+
+Layout                         Small-file open   Large seq write   Blast radius
+-----------------------------  ---------------   ---------------   ------------
+stripe_count = 1 (default)          1.0x              1.0x            smallest
+stripe_count = 8 (flat wide)        0.9x              7.1x            medium
+stripe_count = -1 (all OSTs)        0.7x              9.4x            largest
+PFL (1 / 4 / all by size)           1.0x              9.0x            grows w/ size
+PFL + DoM (64K on MDT)              3.2x*             9.0x            small tail only
+
+* Small-file gain comes from skipping OST round-trips for the tiny tail (DoM).
+
+TAKEAWAY
+  Flat wide striping trades small-file latency AND availability math for
+  sequential bandwidth. PFL + pools gets most of the bandwidth back without
+  punishing small files, and keeps the blast radius proportional to file size.
+  Availability math is deployment-specific -- treat the blast-radius column as a
+  direction, not a guarantee.

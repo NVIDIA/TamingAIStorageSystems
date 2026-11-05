@@ -1,0 +1,16 @@
+# before.out  --  stripe_count = 1  (the default)
+# Pre-recorded write of a 24 GiB checkpoint. RELATIVE units (baseline = 1.0x).
+$ lfs getstripe /scratch/ckpt/model_epoch3.pt
+  lmm_stripe_count:  1
+  lmm_stripe_size:   1048576
+  lmm_pattern:       raid0
+  lmm_layout_gen:    0
+  lmm_stripe_offset: 17
+	obdidx		 objid		 group
+	    17	      0x4b1c2	         0
+
+$ ior -w -t 1m -b 24g -o /scratch/ckpt/model_epoch3.pt
+Operation   Max(Rel)   Min(Rel)   Mean(Rel)   StdDev   OSTs touched
+---------   --------   --------   ---------   ------   ------------
+write          1.00       1.00        1.00     0.01              1
+# Only OST 17 did any work. 39 OSTs sat idle. This is one disk shelf.
