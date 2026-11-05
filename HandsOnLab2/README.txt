@@ -2,7 +2,7 @@
  SC26 Tutorial — Taming AI Storage Systems
  Hands-on Lab 2: Storage System Configuration   (9:40–9:50, 10 min)
  Folder: HandsOnLab2/   (sits beside HandsOnLab1/ and HandsOnLab3/ in the tutorial download tree)
- Presenter: Scott Ekstrom (DDN)
+ Presenter: Christopher Grossmeier (DDN)
 ==============================================================================
 
 WHAT THIS IS
